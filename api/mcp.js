@@ -10,18 +10,20 @@ export default async function handler(req, res) {
   }
 
   const token = process.env.SHAREBOX_CONNECTOR_TOKEN;
+
   if (!token || req.headers.authorization !== `Bearer ${token}`) {
     return res.status(401).json({ error: "Unauthorized" });
   }
 
-  const supabaseUrl = process.env.SUPABASE_URL;
-  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-  if (!supabaseUrl || !supabaseKey) {
-    return res.status(500).json({ error: "Server environment is incomplete" });
+  if (!url || !key) {
+    return res.status(500).json({ error: "Server configuration missing" });
   }
 
-  const supabase = createClient(supabaseUrl, supabaseKey);
+  const supabase = createClient(url, key);
+
   const server = new McpServer({
     name: "sharebox",
     version: "1.0.0"
@@ -29,25 +31,35 @@ export default async function handler(req, res) {
 
   server.tool(
     "list_files",
-    "List recent project files in ShareBox",
+    "List recent project files in ShareBox storage",
     { limit: z.number().int().min(1).max(50).optional() },
     async ({ limit = 20 }) => {
       const { data, error } = await supabase.storage
         .from("shared-files")
-        .list("", { limit, sortBy: { column: "name", order: "desc" } });
+        .list("", {
+          limit,
+          sortBy: { column: "name", order: "desc" }
+        });
 
       if (error) {
-        return { content: [{ type: "text", text: error.message }], isError: true };
+        return {
+          content: [{ type: "text", text: error.message }],
+          isError: true
+        };
       }
 
       return {
         content: [{
           type: "text",
-          text: JSON.stringify((data || []).map(file => ({
-            name: file.name,
-            updated_at: file.updated_at,
-            size: file.metadata?.size
-          })), null, 2)
+          text: JSON.stringify(
+            (data || []).map(file => ({
+              name: file.name,
+              updated_at: file.updated_at,
+              size: file.metadata?.size
+            })),
+            null,
+            2
+          )
         }]
       };
     }
@@ -61,4 +73,3 @@ export default async function handler(req, res) {
   await server.connect(transport);
   await transport.handleRequest(req, res, req.body);
 }
-
