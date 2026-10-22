@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ShareBox — File Sharing</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1020;--panel:#141b2e;--line:#29334d;--text:#eef2ff;--muted:#a8b3cc;--accent:#7c9cff;--good:#73e0b0}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#172344,#0b1020 55%);font:16px system-ui,-apple-system,Segoe UI,sans-serif;color:var(--text);min-height:100vh}
+main{max-width:760px;margin:auto;padding:24px 16px 48px}.brand{display:flex;align-items:center;gap:12px;margin:10px 0 24px}.logo{width:46px;height:46px;border-radius:14px;background:linear-gradient(135deg,#7c9cff,#a88bff);display:grid;place-items:center;font-size:24px;color:#071025;font-weight:900}
+h1{font-size:27px;margin:0}p{color:var(--muted);line-height:1.5}.card{background:rgba(20,27,46,.94);border:1px solid var(--line);border-radius:18px;padding:18px;margin:14px 0;box-shadow:0 10px 35px #0002}
+label{display:block;font-weight:650;margin:12px 0 7px}input,select,button{font:inherit}input[type=text],input[type=password],select{width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:#0d1426;color:var(--text)}
+input[type=file]{width:100%;padding:12px;border:1px dashed #526184;border-radius:10px;background:#0d1426;color:var(--muted)}
+button{border:0;border-radius:11px;background:var(--accent);color:#071025;font-weight:750;padding:12px 16px;cursor:pointer;width:100%;margin-top:14px}
+button.secondary{background:#273653;color:var(--text)}button:disabled{opacity:.5;cursor:wait}
+.small{font-size:13px;color:var(--muted)}.status{white-space:pre-wrap;margin-top:12px;color:var(--good);overflow-wrap:anywhere}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+a{color:#a9bcff;overflow-wrap:anywhere}.hidden{display:none}.pill{display:inline-block;padding:4px 9px;border-radius:999px;background:#263451;color:#dbe5ff;font-size:12px}
+hr{border:0;border-top:1px solid var(--line);margin:18px 0}
+@media(max-width:520px){.row{grid-template-columns:1fr}main{padding:16px 12px 36px}h1{font-size:24px}}
+</style>
+</head>
+<body>
+<main>
+  <div class="brand"><div class="logo">S</div><div><h1>ShareBox</h1><div class="small">Share files with a link · Persistent + temporary</div></div></div>
+  <p>A simple starting point for your bigger file-sharing project. Connect your own Supabase project to enable real uploads.</p>
+
+  <section class="card">
+    <h2>1. Connect storage</h2>
+    <p class="small">Paste your Supabase Project URL and anon/public key. These are designed for browser use when your database/storage policies are configured correctly. Never paste a service-role key here.</p>
+    <label for="supabaseUrl">Supabase Project URL</label>
+    <input id="supabaseUrl" type="text" placeholder="https://YOUR-PROJECT.supabase.co" autocomplete="url">
+    <label for="supabaseKey">Supabase anon/public key</label>
+    <input id="supabaseKey" type="password" placeholder="Paste anon/public key">
+    <button id="connectBtn">Connect</button>
+    <div id="connectStatus" class="status"></div>
+  </section>
+
+  <section class="card">
+    <h2>2. Upload a file</h2>
+    <label for="fileInput">Choose photo, video, PDF, ZIP, or another file</label>
+    <input id="fileInput" type="file">
+    <label for="shareMode">Link type</label>
+    <select id="shareMode">
+      <option value="permanent">Persistent link (public bucket URL)</option>
+      <option value="temporary">Temporary link (expires after 24 hours)</option>
+    </select>
+    <p class="small">Temporary links are signed links that expire after 24 hours. Persistent links remain available until you delete the file or change storage settings.</p>
+    <button id="uploadBtn" disabled>Upload and create link</button>
+    <div id="uploadStatus" class="status"></div>
+    <div id="linkArea" class="hidden"></div>
+  </section>
+
+  <section class="card">
+    <h2>Before first use</h2>
+    <p>In Supabase, create a Storage bucket named <code>shared-files</code>. For the quick prototype, set the bucket to public if you need persistent public links. Temporary links use signed URLs. Do not upload private or sensitive files to a public bucket.</p>
+    <p class="small">This starter does not yet include user accounts, file management, quotas, malware scanning, or automatic deletion of old temporary uploads. Those are next-stage features for a production-grade service.</p>
+  </section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+let client = null;
+const $ = id => document.getElementById(id);
+const connectBtn = $('connectBtn'), uploadBtn = $('uploadBtn');
+connectBtn.addEventListener('click', async () => {
+  const url = $('supabaseUrl').value.trim();
+  const key = $('supabaseKey').value.trim();
+  $('connectStatus').textContent = '';
+  if (!url.startsWith('https://') || !key) {
+    $('connectStatus').textContent = 'Enter a valid Supabase Project URL and anon/public key.';
+    return;
+  }
+  try {
+    client = window.supabase.createClient(url, key);
+    const { error } = await client.storage.from('shared-files').list('', {limit: 1});
+    if (error && !/not found|bucket/i.test(error.message)) throw error;
+    uploadBtn.disabled = false;
+    $('connectStatus').textContent = 'Connected. Choose a file to upload.';
+  } catch (e) {
+    // A storage permission error can still mean the URL/key are valid; report it instead of pretending.
+    $('connectStatus').textContent = 'Connection check: ' + (e.message || String(e)) + '\nCheck the project URL/key and bucket policies.';
+  }
+});
+uploadBtn.addEventListener('click', async () => {
+  if (!client) return;
+  const file = $('fileInput').files[0];
+  if (!file) { $('uploadStatus').textContent = 'Choose a file first.'; return; }
+  uploadBtn.disabled = true;
+  $('uploadStatus').textContent = 'Uploading…';
+  $('linkArea').classList.add('hidden');
+  try {
+    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_').slice(-120) || 'file';
+    const path = `${new Date().toISOString().slice(0,10)}/${crypto.randomUUID()}-${safeName}`;
+    const { error: uploadError } = await client.storage.from('shared-files').upload(path, file, {
+      cacheControl: '3600', upsert: false, contentType: file.type || 'application/octet-stream'
+    });
+    if (uploadError) throw uploadError;
+    let url;
+    if ($('shareMode').value === 'temporary') {
+      const { data, error } = await client.storage.from('shared-files').createSignedUrl(path, 86400);
+      if (error) throw error;
+      url = data.signedUrl;
+    } else {
+      const { data } = client.storage.from('shared-files').getPublicUrl(path);
+      url = data.publicUrl;
+    }
+    $('uploadStatus').textContent = 'Upload complete: ' + file.name;
+    $('linkArea').classList.remove('hidden');
+    $('linkArea').innerHTML = '<hr><label>Share link</label><input id="generatedLink" type="text" readonly><button id="copyBtn" class="secondary">Copy link</button><p class="small">Send this link in ChatGPT. Whether the content can be inspected depends on file type, access, and size.</p>';
+    $('generatedLink').value = url;
+    $('copyBtn').addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(url); $('copyBtn').textContent = 'Copied!'; }
+      catch { $('generatedLink').focus(); $('generatedLink').select(); document.execCommand('copy'); $('copyBtn').textContent = 'Copy attempted'; }
+    });
+  } catch (e) {
+    $('uploadStatus').textContent = 'Upload failed: ' + (e.message || String(e)) + '\nCheck that the shared-files bucket exists and upload policies allow this action.';
+  } finally { uploadBtn.disabled = false; }
+});
+</script>
+</body>
+</html>
