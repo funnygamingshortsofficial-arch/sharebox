@@ -3,118 +3,154 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ShareBox — File Sharing</title>
+<meta name="theme-color" content="#090b13">
+<title>ShareBox — AI-ready file space</title>
 <style>
-:root{color-scheme:dark;--bg:#0b1020;--panel:#141b2e;--line:#29334d;--text:#eef2ff;--muted:#a8b3cc;--accent:#7c9cff;--good:#73e0b0}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#172344,#0b1020 55%);font:16px system-ui,-apple-system,Segoe UI,sans-serif;color:var(--text);min-height:100vh}
-main{max-width:760px;margin:auto;padding:24px 16px 48px}.brand{display:flex;align-items:center;gap:12px;margin:10px 0 24px}.logo{width:46px;height:46px;border-radius:14px;background:linear-gradient(135deg,#7c9cff,#a88bff);display:grid;place-items:center;font-size:24px;color:#071025;font-weight:900}
-h1{font-size:27px;margin:0}p{color:var(--muted);line-height:1.5}.card{background:rgba(20,27,46,.94);border:1px solid var(--line);border-radius:18px;padding:18px;margin:14px 0;box-shadow:0 10px 35px #0002}
-label{display:block;font-weight:650;margin:12px 0 7px}input,select,button{font:inherit}input[type=text],input[type=password],select{width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:#0d1426;color:var(--text)}
-input[type=file]{width:100%;padding:12px;border:1px dashed #526184;border-radius:10px;background:#0d1426;color:var(--muted)}
-button{border:0;border-radius:11px;background:var(--accent);color:#071025;font-weight:750;padding:12px 16px;cursor:pointer;width:100%;margin-top:14px}
-button.secondary{background:#273653;color:var(--text)}button:disabled{opacity:.5;cursor:wait}
-.small{font-size:13px;color:var(--muted)}.status{white-space:pre-wrap;margin-top:12px;color:var(--good);overflow-wrap:anywhere}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-a{color:#a9bcff;overflow-wrap:anywhere}.hidden{display:none}.pill{display:inline-block;padding:4px 9px;border-radius:999px;background:#263451;color:#dbe5ff;font-size:12px}
-hr{border:0;border-top:1px solid var(--line);margin:18px 0}
-@media(max-width:520px){.row{grid-template-columns:1fr}main{padding:16px 12px 36px}h1{font-size:24px}}
+:root{color-scheme:dark;--bg:#090b13;--panel:#111522;--panel2:#151b2b;--line:#272e43;--muted:#9ca7c3;--text:#f4f6ff;--purple:#9b87ff;--cyan:#6ee7f9;--green:#73efba;--pink:#f6a5ff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 10% -10%,#34215d 0,transparent 42%),radial-gradient(ellipse at 100% 5%,#103d50 0,transparent 33%),var(--bg);color:var(--text);font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100vh}
+button,input{font:inherit}button{cursor:pointer;border:0}a{color:#b9adff}
+.wrap{max-width:1180px;margin:auto;padding:22px 20px 60px}.top{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:32px}.brand{display:flex;gap:12px;align-items:center}.logo{width:44px;height:44px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(135deg,#a78bfa,#60e6f5);color:#101322;font-size:24px;font-weight:900;box-shadow:0 8px 30px #7d70ff44}.brand h1{font-size:20px;line-height:1.1;margin:0;letter-spacing:-.6px}.brand p{margin:4px 0 0;color:var(--muted);font-size:12px}.topright{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.pill{border:1px solid var(--line);border-radius:999px;padding:7px 11px;color:#cbd4ef;font-size:12px;background:#111522b8}.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);margin-right:7px;box-shadow:0 0 12px #73efba77}
+.hero{display:grid;grid-template-columns:1.35fr .85fr;gap:18px;margin-bottom:18px}.hero-main,.hero-side,.card{background:linear-gradient(145deg,#151a2bdf,#0f1320f2);border:1px solid #30364d;border-radius:24px;box-shadow:0 20px 70px #0002}.hero-main{padding:30px;position:relative;overflow:hidden}.hero-main:after{content:"";position:absolute;width:260px;height:260px;right:-95px;top:-100px;background:radial-gradient(circle,#8c72ff38,transparent 70%);pointer-events:none}.eyebrow{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);font-weight:800}.hero h2{font-size:clamp(30px,4.6vw,50px);letter-spacing:-2px;line-height:1.04;margin:12px 0 13px;max-width:650px}.gradient{background:linear-gradient(90deg,#c5b8ff,#75e7fa 75%);color:transparent;background-clip:text}.hero-main>p{color:#aab4ce;max-width:590px;margin:0 0 23px}.actions{display:flex;gap:10px;flex-wrap:wrap}.btn{padding:11px 16px;border-radius:12px;font-weight:750;font-size:13px;transition:.2s}.btn:hover{transform:translateY(-1px);filter:brightness(1.08)}.primary{background:linear-gradient(110deg,#a995ff,#6de1ef);color:#111426;box-shadow:0 7px 25px #8b80ff2c}.secondary{background:#20263a;color:#e7eaff;border:1px solid #363e57}.danger{background:#3a202b;color:#ffbec9;border:1px solid #663746}.hero-side{padding:23px;display:flex;flex-direction:column;justify-content:space-between;gap:18px}.sidehead{display:flex;justify-content:space-between;align-items:center}.sidehead h3{margin:0;font-size:15px}.spark{color:#c6baff;font-size:22px}.statgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stat{border:1px solid #2a3046;background:#0d1120;border-radius:16px;padding:15px}.stat strong{display:block;font-size:25px;letter-spacing:-1px}.stat span{font-size:11px;color:var(--muted)}.statusline{display:flex;gap:9px;align-items:center;color:#b9c3dc;font-size:12px}.statusicon{width:31px;height:31px;border-radius:10px;background:#24213f;display:grid;place-items:center;color:#c8bcff}
+.grid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}.card{padding:22px}.cardhead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:17px}.card h3{margin:0;font-size:17px;letter-spacing:-.3px}.sub{color:var(--muted);font-size:12px;margin-top:4px}.tag{font-size:10px;text-transform:uppercase;letter-spacing:1px;border-radius:7px;padding:5px 8px;background:#1e2d37;color:#8ef1d1;border:1px solid #285045;font-weight:800}
+.drop{border:1.5px dashed #454c6b;border-radius:18px;padding:28px 15px;text-align:center;background:linear-gradient(145deg,#171d31aa,#11152266);transition:.2s}.drop.drag{border-color:var(--cyan);background:#18313b66}.uploadglyph{font-size:30px;margin-bottom:7px}.drop strong{display:block;font-size:15px}.drop p{font-size:12px;color:var(--muted);margin:5px 0 14px}.tiny{font-size:11px;color:var(--muted);margin-top:12px}.progress{height:5px;background:#262c40;border-radius:99px;overflow:hidden;margin-top:14px;display:none}.progress>div{height:100%;width:0;background:linear-gradient(90deg,var(--purple),var(--cyan));transition:width .2s}.fields{display:grid;gap:10px;margin-top:15px}.field label{display:block;font-size:11px;color:#b7c1dc;margin-bottom:5px}.field input{width:100%;background:#0a0e19;border:1px solid #303750;border-radius:10px;padding:11px 12px;color:white;outline:none}.field input:focus{border-color:#9b87ff;box-shadow:0 0 0 3px #9b87ff20}.checkrow{display:flex;align-items:flex-start;gap:9px;color:#b7c1dc;font-size:12px;margin:12px 0}.checkrow input{accent-color:#a995ff;margin-top:4px}.fieldrow{display:grid;grid-template-columns:1fr 1fr;gap:10px}.result{display:none;margin-top:14px;padding:12px;border:1px solid #31594e;background:#10241f;border-radius:12px;font-size:12px;overflow-wrap:anywhere}.result a{display:block;margin:6px 0}.result .btn{margin-top:6px}
+.connector{border:1px solid #383452;background:linear-gradient(135deg,#211c38,#111725);border-radius:17px;padding:17px;margin-bottom:12px}.connectorhead{display:flex;align-items:center;gap:11px;margin-bottom:8px}.chatlogo{width:37px;height:37px;border-radius:12px;background:#262345;display:grid;place-items:center;font-size:20px}.connector h4{margin:0;font-size:14px}.connector p{color:#adb5d0;font-size:12px;margin:7px 0 12px}.warning{border:1px solid #66512b;background:#2b2415;color:#e9d6a5;padding:11px;border-radius:12px;font-size:11px;margin-top:12px}.history{margin-top:18px}.historytop{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}.historylist{display:grid;gap:9px}.fileitem{display:flex;align-items:center;gap:11px;padding:11px;border:1px solid #292f44;background:#0d1120;border-radius:13px;min-width:0}.fileicon{width:39px;height:39px;border-radius:11px;background:#22213b;display:grid;place-items:center;font-size:18px;flex-shrink:0}.filemeta{flex:1;min-width:0}.filemeta strong{display:block;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.filemeta span{display:block;color:var(--muted);font-size:10px;margin-top:3px}.fileactions{display:flex;gap:6px;flex-wrap:wrap}.mini{padding:7px 9px;border-radius:8px;background:#22283b;color:#e6eaff;font-size:10px;font-weight:700}.empty{border:1px dashed #343b52;border-radius:13px;padding:20px;text-align:center;color:var(--muted);font-size:12px}.footer{text-align:center;color:#69748f;font-size:11px;margin-top:25px}.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:#e7eaff;color:#101322;padding:11px 16px;border-radius:12px;font-weight:750;font-size:12px;box-shadow:0 12px 40px #0005;transition:.25s;z-index:5;max-width:90vw}.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:780px){.hero,.grid{grid-template-columns:1fr}.hero-main{padding:24px}.hero-side{padding:19px}.wrap{padding:16px 13px 40px}.top{margin-bottom:20px}.brand p{max-width:175px}.pill{display:none}.card{padding:17px}.hero h2{letter-spacing:-1.4px}.fieldrow{grid-template-columns:1fr}.fileitem{align-items:flex-start}.fileactions{flex-direction:column}}
 </style>
 </head>
 <body>
-<main>
-  <div class="brand"><div class="logo">S</div><div><h1>ShareBox</h1><div class="small">Share files with a link · Persistent + temporary</div></div></div>
-  <p>A simple starting point for your bigger file-sharing project. Connect your own Supabase project to enable real uploads.</p>
-
-  <section class="card">
-    <h2>1. Connect storage</h2>
-    <p class="small">Paste your Supabase Project URL and anon/public key. These are designed for browser use when your database/storage policies are configured correctly. Never paste a service-role key here.</p>
-    <label for="supabaseUrl">Supabase Project URL</label>
-    <input id="supabaseUrl" type="text" placeholder="https://YOUR-PROJECT.supabase.co" autocomplete="url">
-    <label for="supabaseKey">Supabase anon/public key</label>
-    <input id="supabaseKey" type="password" placeholder="Paste anon/public key">
-    <button id="connectBtn">Connect</button>
-    <div id="connectStatus" class="status"></div>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><div class="logo">S</div><div><h1>ShareBox<span style="color:#a99bff">.</span></h1><p>Your files. Your links. Your workspace.</p></div></div>
+    <div class="topright"><span class="pill"><span class="dot"></span>Private device workspace</span><span class="pill">✦ AI-ready workflow</span></div>
+  </header>
+  <section class="hero">
+    <div class="hero-main">
+      <div class="eyebrow">A smarter way to share</div>
+      <h2>Drop it here.<br><span class="gradient">Move ideas forward.</span></h2>
+      <p>A clean, fast file-sharing workspace with reusable links, upload history, and a place to configure a future ChatGPT connector.</p>
+      <div class="actions"><button class="btn primary" onclick="document.getElementById('fileInput').click()">＋ Upload files</button><button class="btn secondary" onclick="document.getElementById('settings').scrollIntoView({behavior:'smooth'})">⚙ Connection settings</button></div>
+    </div>
+    <div class="hero-side">
+      <div class="sidehead"><h3>Workspace overview</h3><span class="spark">✧</span></div>
+      <div class="statgrid"><div class="stat"><strong id="fileCount">0</strong><span>Saved link records</span></div><div class="stat"><strong id="connStatus">Off</strong><span>Storage connection</span></div></div>
+      <div class="statusline"><span class="statusicon">↗</span><span>Persistent links + temporary links in one place</span></div>
+      <div class="statusline"><span class="statusicon">⌘</span><span>Connection details can be remembered on this device</span></div>
+    </div>
   </section>
 
-  <section class="card">
-    <h2>2. Upload a file</h2>
-    <label for="fileInput">Choose photo, video, PDF, ZIP, or another file</label>
-    <input id="fileInput" type="file">
-    <label for="shareMode">Link type</label>
-    <select id="shareMode">
-      <option value="permanent">Persistent link (public bucket URL)</option>
-      <option value="temporary">Temporary link (expires after 24 hours)</option>
-    </select>
-    <p class="small">Temporary links are signed links that expire after 24 hours. Persistent links remain available until you delete the file or change storage settings.</p>
-    <button id="uploadBtn" disabled>Upload and create link</button>
-    <div id="uploadStatus" class="status"></div>
-    <div id="linkArea" class="hidden"></div>
-  </section>
+  <main class="grid">
+    <section class="card">
+      <div class="cardhead"><div><h3>Upload centre</h3><div class="sub">Choose files or drag them into the zone</div></div><span class="tag">Ready to upload</span></div>
+      <div class="drop" id="dropzone" role="button" tabindex="0" onclick="document.getElementById('fileInput').click()">
+        <div class="uploadglyph">☁️</div><strong>Drop files to start sharing</strong><p>Photos, videos, documents and more</p><button class="btn secondary" type="button" onclick="event.stopPropagation();document.getElementById('fileInput').click()">Browse files</button>
+        <div class="tiny">Uploads go to your configured Supabase bucket. Anyone with a public link may be able to access that file.</div>
+      </div>
+      <input id="fileInput" type="file" multiple hidden>
+      <div class="progress" id="progress"><div id="progressbar"></div></div>
+      <div class="fields">
+        <div class="field"><label for="linkMode">Link type for new uploads</label><select id="linkMode" style="width:100%;background:#0a0e19;border:1px solid #303750;border-radius:10px;padding:11px;color:white"><option value="public">Persistent public link</option><option value="temporary">Temporary link (24 hours)</option></select></div>
+      </div>
+      <div id="uploadResult" class="result"></div>
+      <div class="history">
+        <div class="historytop"><div><h3>Recent files</h3><div class="sub">History is stored in this browser</div></div><button class="mini" onclick="clearHistory()">Clear history</button></div>
+        <div id="historyList" class="historylist"><div class="empty">Your uploads will appear here after the first successful upload.</div></div>
+      </div>
+    </section>
 
-  <section class="card">
-    <h2>Before first use</h2>
-    <p>In Supabase, create a Storage bucket named <code>shared-files</code>. For the quick prototype, set the bucket to public if you need persistent public links. Temporary links use signed URLs. Do not upload private or sensitive files to a public bucket.</p>
-    <p class="small">This starter does not yet include user accounts, file management, quotas, malware scanning, or automatic deletion of old temporary uploads. Those are next-stage features for a production-grade service.</p>
-  </section>
-</main>
+    <section class="card" id="settings">
+      <div class="cardhead"><div><h3>Connect your storage</h3><div class="sub">Enter once, save on this device</div></div><span class="tag">Setup</span></div>
+      <div class="fields">
+        <div class="field"><label for="projectUrl">Supabase project URL</label><input id="projectUrl" placeholder="https://your-project.supabase.co" autocomplete="url"></div>
+        <div class="field"><label for="publicKey">Supabase publishable / anon key</label><input id="publicKey" placeholder="sb_publishable_… or anon key" autocomplete="off"></div>
+      </div>
+      <label class="checkrow"><input id="remember" type="checkbox" checked><span><strong>Remember connection on this device</strong><br>Stored in this browser's local storage. Avoid using this on a shared device.</span></label>
+      <div class="actions"><button class="btn primary" id="connectBtn" onclick="connectStorage()">Connect & save</button><button class="btn secondary" onclick="forgetConnection()">Forget</button></div>
+      <div id="connectResult" class="result"></div>
+      <div class="warning">Security note: the browser key is visible to users of this device. Use only a publishable/anon key, never a service-role secret. Public buckets and open upload policies can be abused; add authentication and limits before production.</div>
+
+      <div style="height:1px;background:#2b3045;margin:20px 0"></div>
+      <div class="cardhead"><div><h3>ChatGPT connection</h3><div class="sub">Direct file discovery — connector setup required</div></div><span class="tag" style="background:#32291a;border-color:#5d4a2c;color:#f1d39b">Not connected</span></div>
+      <div class="connector">
+        <div class="connectorhead"><div class="chatlogo">✳</div><div><h4>ChatGPT connector</h4><div class="sub">Goal: let ChatGPT request files securely</div></div></div>
+        <p>This starter keeps your link-sharing fallback ready. Direct access requires a separately hosted, authenticated API/MCP connector and setup in a ChatGPT environment that supports custom connectors. This button does not activate that integration by itself.</p>
+        <button class="btn secondary" onclick="showConnectorInfo()">View integration checklist</button>
+      </div>
+      <div id="connectorInfo" class="result">Next: build a secure backend/API that lists only files you authorize, add authentication and permission checks, host it over HTTPS, then connect it through ChatGPT's supported connector settings. Keep the copy-link option as a fallback. This starter does not automatically send photos into this chat.</div>
+      <div class="tiny">Fallback still works: upload → copy a link → paste it into ChatGPT. Access depends on file permissions and the link being readable.</div>
+    </section>
+  </main>
+  <div class="footer">ShareBox Starter · Built for mobile and desktop · Do not upload sensitive files to a public bucket</div>
+</div>
+<div id="toast" class="toast"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-let client = null;
 const $ = id => document.getElementById(id);
-const connectBtn = $('connectBtn'), uploadBtn = $('uploadBtn');
-connectBtn.addEventListener('click', async () => {
-  const url = $('supabaseUrl').value.trim();
-  const key = $('supabaseKey').value.trim();
-  $('connectStatus').textContent = '';
-  if (!url.startsWith('https://') || !key) {
-    $('connectStatus').textContent = 'Enter a valid Supabase Project URL and anon/public key.';
-    return;
-  }
-  try {
-    client = window.supabase.createClient(url, key);
-    const { error } = await client.storage.from('shared-files').list('', {limit: 1});
-    if (error && !/not found|bucket/i.test(error.message)) throw error;
-    uploadBtn.disabled = false;
-    $('connectStatus').textContent = 'Connected. Choose a file to upload.';
-  } catch (e) {
-    // A storage permission error can still mean the URL/key are valid; report it instead of pretending.
-    $('connectStatus').textContent = 'Connection check: ' + (e.message || String(e)) + '\nCheck the project URL/key and bucket policies.';
-  }
-});
-uploadBtn.addEventListener('click', async () => {
-  if (!client) return;
-  const file = $('fileInput').files[0];
-  if (!file) { $('uploadStatus').textContent = 'Choose a file first.'; return; }
-  uploadBtn.disabled = true;
-  $('uploadStatus').textContent = 'Uploading…';
-  $('linkArea').classList.add('hidden');
-  try {
-    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_').slice(-120) || 'file';
-    const path = `${new Date().toISOString().slice(0,10)}/${crypto.randomUUID()}-${safeName}`;
-    const { error: uploadError } = await client.storage.from('shared-files').upload(path, file, {
-      cacheControl: '3600', upsert: false, contentType: file.type || 'application/octet-stream'
-    });
-    if (uploadError) throw uploadError;
-    let url;
-    if ($('shareMode').value === 'temporary') {
-      const { data, error } = await client.storage.from('shared-files').createSignedUrl(path, 86400);
-      if (error) throw error;
-      url = data.signedUrl;
-    } else {
-      const { data } = client.storage.from('shared-files').getPublicUrl(path);
-      url = data.publicUrl;
-    }
-    $('uploadStatus').textContent = 'Upload complete: ' + file.name;
-    $('linkArea').classList.remove('hidden');
-    $('linkArea').innerHTML = '<hr><label>Share link</label><input id="generatedLink" type="text" readonly><button id="copyBtn" class="secondary">Copy link</button><p class="small">Send this link in ChatGPT. Whether the content can be inspected depends on file type, access, and size.</p>';
-    $('generatedLink').value = url;
-    $('copyBtn').addEventListener('click', async () => {
-      try { await navigator.clipboard.writeText(url); $('copyBtn').textContent = 'Copied!'; }
-      catch { $('generatedLink').focus(); $('generatedLink').select(); document.execCommand('copy'); $('copyBtn').textContent = 'Copy attempted'; }
-    });
-  } catch (e) {
-    $('uploadStatus').textContent = 'Upload failed: ' + (e.message || String(e)) + '\nCheck that the shared-files bucket exists and upload policies allow this action.';
-  } finally { uploadBtn.disabled = false; }
-});
+const KEYS={url:'sharebox.supabase.url',key:'sharebox.supabase.key',history:'sharebox.history'};
+let supabaseClient=null, records=[];
+function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600)}
+function getStore(k){try{return localStorage.getItem(k)}catch(e){return null}}
+function setStore(k,v){try{localStorage.setItem(k,v);return true}catch(e){return false}}
+function readHistory(){try{records=JSON.parse(getStore(KEYS.history)||'[]');if(!Array.isArray(records))records=[]}catch(e){records=[]}renderHistory()}
+function renderHistory(){
+ $('fileCount').textContent=records.length;
+ const list=$('historyList');
+ if(!records.length){list.innerHTML='<div class="empty">Your uploads will appear here after the first successful upload.</div>';return}
+ list.innerHTML=records.slice(0,50).map((r,i)=>`<div class="fileitem"><div class="fileicon">${iconFor(r.name)}</div><div class="filemeta"><strong title="${esc(r.name)}">${esc(r.name)}</strong><span>${esc(r.size||'')} · ${esc(r.date||'')} · ${r.temporary?'Temporary link':'Persistent link'}</span></div><div class="fileactions"><button class="mini" onclick="copyLink(${i})">Copy link</button><button class="mini" onclick="openLink(${i})">Open</button></div></div>`).join('');
+}
+function iconFor(n){const x=(n||'').split('.').pop().toLowerCase();if(['png','jpg','jpeg','gif','webp','heic'].includes(x))return '🖼️';if(['mp4','mov','webm'].includes(x))return '🎬';if(['pdf'].includes(x))return '📄';return '📦'}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function saveConnection(){
+ const url=$('projectUrl').value.trim().replace(/\/+$/,'');const key=$('publicKey').value.trim();
+ if(!/^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(url)){toast('Enter a valid Supabase project URL');return false}
+ if(!key){toast('Enter your publishable / anon key');return false}
+ if($('remember').checked){setStore(KEYS.url,url);setStore(KEYS.key,key)}else{try{localStorage.removeItem(KEYS.url);localStorage.removeItem(KEYS.key)}catch(e){}}
+ return {url,key};
+}
+function connectStorage(){
+ const cfg=saveConnection();if(!cfg)return;
+ if(!window.supabase||!window.supabase.createClient){toast('Storage SDK failed to load. Check internet and reload.');return}
+ try{supabaseClient=window.supabase.createClient(cfg.url,cfg.key);$('connStatus').textContent='Ready';$('connectResult').style.display='block';$('connectResult').innerHTML='<strong>Connection settings loaded.</strong><br>Upload will verify bucket access. Ensure the bucket <code>shared-files</code> exists and policies are configured.';toast('Connection saved on this device')}
+ catch(e){$('connStatus').textContent='Error';toast('Could not initialize storage client')}
+}
+function forgetConnection(){try{localStorage.removeItem(KEYS.url);localStorage.removeItem(KEYS.key)}catch(e){}$('projectUrl').value='';$('publicKey').value='';supabaseClient=null;$('connStatus').textContent='Off';$('connectResult').style.display='none';toast('Saved connection forgotten')}
+function showConnectorInfo(){$('connectorInfo').style.display='block';$('connectorInfo').scrollIntoView({behavior:'smooth',block:'nearest'})}
+function clearHistory(){if(!confirm('Clear saved link history from this browser? Files in storage will not be deleted.'))return;records=[];setStore(KEYS.history,'[]');renderHistory();toast('Local history cleared')}
+async function copyLink(i){try{await navigator.clipboard.writeText(records[i].url);toast('Link copied')}catch(e){prompt('Copy this link:',records[i].url)}}
+function openLink(i){window.open(records[i].url,'_blank','noopener')}
+function humanSize(n){if(n<1024)return n+' B';if(n<1048576)return (n/1024).toFixed(1)+' KB';return (n/1048576).toFixed(1)+' MB'}
+async function uploadFiles(files){
+ if(!files||!files.length)return;
+ if(!supabaseClient){toast('Connect storage first');$('settings').scrollIntoView({behavior:'smooth'});return}
+ const mode=$('linkMode').value, progress=$('progress'), bar=$('progressbar'), result=$('uploadResult');
+ progress.style.display='block';bar.style.width='3%';result.style.display='none';
+ const cfgUrl=getStore(KEYS.url)||$('projectUrl').value.trim().replace(/\/+$/,'');
+ let done=0, errs=[];
+ for(const file of Array.from(files)){
+   try{
+    const safeName=file.name.replace(/[^\w.\-() ]/g,'_').slice(0,140);
+    const path=`${new Date().toISOString().slice(0,10)}/${crypto.randomUUID()}-${safeName}`;
+    const {error:upErr}=await supabaseClient.storage.from('shared-files').upload(path,file,{upsert:false,contentType:file.type||'application/octet-stream'});
+    if(upErr)throw upErr;
+    let url, temporary=mode==='temporary';
+    if(temporary){const {data,error}=await supabaseClient.storage.from('shared-files').createSignedUrl(path,86400);if(error)throw error;url=data.signedUrl}
+    else{const {data}=supabaseClient.storage.from('shared-files').getPublicUrl(path);url=data.publicUrl}
+    records.unshift({name:file.name,size:humanSize(file.size),date:new Date().toLocaleString(),url,path,temporary});done++;
+   }catch(e){errs.push(file.name+': '+(e.message||'upload failed'))}
+   bar.style.width=Math.round((done+errs.length)/files.length*100)+'%';
+ }
+ records=records.slice(0,50);setStore(KEYS.history,JSON.stringify(records));renderHistory();
+ result.style.display='block';
+ if(done){const last=records[0];result.innerHTML=`<strong>✓ ${done} file(s) uploaded</strong><br>Latest link:<a href="${esc(last.url)}" target="_blank" rel="noopener">${esc(last.url)}</a><button class="btn secondary" onclick="copyLink(0)">Copy latest link</button>`}
+ if(errs.length)result.innerHTML+=`<div style="color:#ffb7c4;margin-top:8px">${errs.map(esc).join('<br>')}</div>`;
+ progress.style.display='none';bar.style.width='0%';toast(done?`Uploaded ${done} file(s)`:'Upload failed — check bucket and policies');
+}
+$('fileInput').addEventListener('change',e=>{uploadFiles(e.target.files);e.target.value=''});
+const dz=$('dropzone');
+['dragenter','dragover'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.add('drag')}));
+['dragleave','drop'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.remove('drag')}));
+dz.addEventListener('drop',e=>uploadFiles(e.dataTransfer.files));
+dz.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();$('fileInput').click()}});
+(function init(){const url=getStore(KEYS.url),key=getStore(KEYS.key);if(url&&key){$('projectUrl').value=url;$('publicKey').value=key;connectStorage()}readHistory()})();
 </script>
 </body>
 </html>
