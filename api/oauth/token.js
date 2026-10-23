@@ -1,8 +1,18 @@
 
 export default function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
-  res.status(501).json({
-    error: "oauth_not_configured",
-    message: "ShareBox OAuth token exchange is not implemented yet."
+
+  if (req.method !== "POST") {
+    res.setHeader("Allow", "POST");
+    return res.status(405).json({
+      error: "invalid_request",
+      error_description: "POST required"
+    });
+  }
+
+  return res.status(501).json({
+    error: "unsupported_grant_type",
+    error_description:
+      "OAuth token exchange is not implemented yet."
   });
 }
