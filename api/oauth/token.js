@@ -1,18 +1,16 @@
-
 export default function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
 
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return res.status(405).json({
-      error: "invalid_request",
-      error_description: "POST required"
+      error: "method_not_allowed"
     });
   }
 
   return res.status(501).json({
-    error: "unsupported_grant_type",
+    error: "oauth_setup_incomplete",
     error_description:
-      "OAuth token exchange is not implemented yet."
+      "Secure token exchange is not configured yet."
   });
 }
