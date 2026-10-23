@@ -3,11 +3,11 @@
   "rewrites": [
     {
       "source": "/.well-known/oauth-authorization-server",
-      "destination": "/api/.well-known/oauth-authorization-server.json"
+      "destination": "/api/oauth/metadata"
     },
     {
       "source": "/.well-known/oauth-authorization-server.json",
-      "destination": "/api/.well-known/oauth-authorization-server.json"
+      "destination": "/api/oauth/metadata"
     }
   ]
 }
