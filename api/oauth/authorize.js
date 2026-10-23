@@ -1,10 +1,11 @@
-
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
 
   if (req.method !== "GET") {
     res.setHeader("Allow", "GET");
-    return res.status(405).json({ error: "method_not_allowed" });
+    return res.status(405).json({
+      error: "method_not_allowed"
+    });
   }
 
   const {
@@ -12,8 +13,7 @@ export default async function handler(req, res) {
     redirect_uri,
     response_type,
     code_challenge,
-    code_challenge_method,
-    state
+    code_challenge_method
   } = req.query;
 
   if (
@@ -25,14 +25,14 @@ export default async function handler(req, res) {
   ) {
     return res.status(400).json({
       error: "invalid_request",
-      error_description: "Required OAuth or PKCE parameters are missing."
+      error_description:
+        "Required OAuth and PKCE parameters are missing."
     });
   }
 
   return res.status(501).json({
     error: "oauth_setup_incomplete",
-    message:
-      "Authorization code storage, client registration, redirect URI validation, consent, and token exchange must be configured before OAuth can be used.",
-    state: state || null
+    error_description:
+      "Client registration, redirect validation, user consent and secure code issuance must be implemented."
   });
 }
