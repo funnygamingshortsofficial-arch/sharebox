@@ -1,9 +1,15 @@
-
 export default function handler(req, res) {
   res.setHeader("Content-Type", "application/json");
   res.setHeader("Cache-Control", "no-store");
 
-  res.status(200).json({
+  if (req.method !== "GET") {
+    res.setHeader("Allow", "GET");
+    return res.status(405).json({
+      error: "method_not_allowed"
+    });
+  }
+
+  return res.status(200).json({
     issuer: "https://sharebox-woad.vercel.app",
     authorization_endpoint:
       "https://sharebox-woad.vercel.app/api/oauth/authorize",
