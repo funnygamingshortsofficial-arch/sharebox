@@ -15,6 +15,8 @@ export default function handler(req, res) {
       "https://sharebox-woad.vercel.app/api/oauth/authorize",
     token_endpoint:
       "https://sharebox-woad.vercel.app/api/oauth/token",
+    registration_endpoint:
+      "https://sharebox-woad.vercel.app/api/oauth/register",
     response_types_supported: ["code"],
     grant_types_supported: ["authorization_code"],
     code_challenge_methods_supported: ["S256"],
