@@ -1,71 +1,99 @@
 
-import { createClient } from "@supabase/supabase-js";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { z } from "zod";
+import { createClient } from "@supabase/supabase-js";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
-    res.setHeader("Allow", "POST");
-    return res.status(405).json({ error: "Method not allowed" });
+    return res.status(405).json({
+      error: "Method not allowed. Use POST."
+    });
   }
 
+  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   const token = process.env.SHAREBOX_CONNECTOR_TOKEN;
-  const auth = req.headers.authorization || "";
 
-  if (!token || auth !== `Bearer ${token}`) {
-    return res.status(401).json({ error: "Unauthorized" });
+  if (!supabaseUrl || !supabaseKey || !token) {
+    return res.status(500).json({
+      error: "Server configuration missing"
+    });
+  }
+
+  if (req.headers.authorization !== `Bearer ${token}`) {
+    return res.status(401).json({
+      error: "Unauthorized"
+    });
   }
 
   try {
-    const supabase = createClient(
-      process.env.SUPABASE_URL,
-      process.env.SUPABASE_SERVICE_ROLE_KEY
-    );
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
     const server = new McpServer({
       name: "sharebox",
-      version: "1.0.0"
+      version: "1.1.0"
     });
 
     server.tool(
       "list_files",
-      "List files stored in ShareBox",
-      { limit: z.number().int().min(1).max(100).optional() },
-      async ({ limit = 10 }) => {
+      "List recent files uploaded to ShareBox",
+      {
+        limit: z.number().int().min(1).max(50).optional()
+      },
+      async ({ limit = 20 }) => {
         const { data, error } = await supabase.storage
           .from("shared-files")
           .list("", {
             limit,
-            sortBy: { column: "name", order: "desc" }
+            sortBy: {
+              column: "name",
+              order: "desc"
+            }
           });
 
         if (error) {
           return {
             isError: true,
-            content: [{ type: "text", text: error.message }]
+            content: [{
+              type: "text",
+              text: `Could not list files: ${error.message}`
+            }]
           };
         }
+
+        const files = (data || []).map((file) => ({
+          name: file.name,
+          updated_at: file.updated_at,
+          size: file.metadata?.size,
+          url:
+            `${supabaseUrl}/storage/v1/object/public/shared-files/` +
+            encodeURIComponent(file.name)
+        }));
 
         return {
           content: [{
             type: "text",
-            text: JSON.stringify(data, null, 2)
+            text: JSON.stringify(files, null, 2)
           }]
         };
       }
     );
 
     const transport = new StreamableHTTPServerTransport({
-      sessionIdGenerator: undefined
+      sessionIdGenerator: undefined,
+      enableJsonResponse: true
     });
 
     await server.connect(transport);
     await transport.handleRequest(req, res, req.body);
   } catch (error) {
     console.error("ShareBox MCP error:", error);
+
     if (!res.headersSent) {
-      return res.status(500).json({ error: "MCP server error" });
+      return res.status(500).json({
+        error: "Internal server error"
+      });
     }
   }
 }
